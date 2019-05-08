@@ -87,6 +87,9 @@ const makeHtml = (): string => `
 const isInEU = (): boolean =>
     (getCookie('GU_geo_continent') || 'OTHER').toUpperCase() === 'EU';
 
+const isInAU = (): boolean =>
+    (getCookie('GU_geo_continent') || 'OTHER').toUpperCase() === 'AU';
+
 const hasUnsetAdChoices = (): boolean =>
     allAdConsents.some((_: AdConsent) => getAdConsentState(_) === null);
 
@@ -116,7 +119,7 @@ const isInCommercialConsentGlobalBannerTest = (): boolean =>
 const canShow = (): Promise<boolean> =>
     Promise.resolve(
         hasUnsetAdChoices() &&
-            (isInEU() || isInCommercialConsentGlobalBannerTest()) &&
+            (isInEU() || isInAU() || isInCommercialConsentGlobalBannerTest()) &&
             !hasUserAcknowledgedBanner(messageCode)
     );
 

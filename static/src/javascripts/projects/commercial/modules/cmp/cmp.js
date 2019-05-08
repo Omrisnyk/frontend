@@ -88,6 +88,9 @@ const isInCommercialConsentGlobalBannerTest = (): boolean =>
 const isInEU = (): boolean =>
     (getCookie('GU_geo_continent') || 'OTHER').toUpperCase() === 'EU';
 
+const isInAU = (): boolean =>
+    (getCookie('GU_geo_continent') || 'OTHER').toUpperCase() === 'AU';
+
 class CmpService {
     isLoaded: boolean;
     cmpReady: boolean;
@@ -110,7 +113,7 @@ class CmpService {
             this.cmpConfig.logging = 'debug';
             log.info('Set logging level to DEBUG');
         }
-        if (isInEU() || isInCommercialConsentGlobalBannerTest()) {
+        if (isInEU() || isInAU() || isInCommercialConsentGlobalBannerTest()) {
             this.cmpConfig.gdprApplies = true;
         }
     }
