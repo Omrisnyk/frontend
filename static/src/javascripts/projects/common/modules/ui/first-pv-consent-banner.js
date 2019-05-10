@@ -1,6 +1,7 @@
 // @flow
 import config from 'lib/config';
 import { getCookie } from 'lib/cookies';
+import { getFromStorage } from 'lib/geolocation';
 import { Message, hasUserAcknowledgedBanner } from 'common/modules/ui/message';
 import checkIcon from 'svgs/icon/tick.svg';
 import {
@@ -87,6 +88,12 @@ const makeHtml = (): string => `
 const isInEU = (): boolean =>
     (getCookie('GU_geo_continent') || 'OTHER').toUpperCase() === 'EU';
 
+const isInAU = (): boolean =>
+    (getFromStorage() || 'OTHER').toUpperCase() === 'AU' ||
+    (getFromStorage() || 'OTHER').toUpperCase() === 'NZ';
+
+const gdprApplies = (): boolean => isInEU() || isInAU();
+
 const hasUnsetAdChoices = (): boolean =>
     allAdConsents.some((_: AdConsent) => getAdConsentState(_) === null);
 
@@ -116,7 +123,7 @@ const isInCommercialConsentGlobalBannerTest = (): boolean =>
 const canShow = (): Promise<boolean> =>
     Promise.resolve(
         hasUnsetAdChoices() &&
-            (isInEU() || isInCommercialConsentGlobalBannerTest()) &&
+            (gdprApplies() || isInCommercialConsentGlobalBannerTest()) &&
             !hasUserAcknowledgedBanner(messageCode)
     );
 

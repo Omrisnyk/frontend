@@ -2,6 +2,7 @@
 
 import config from 'lib/config';
 import { getCookie } from 'lib/cookies';
+import { getFromStorage } from 'lib/geolocation';
 import { getUrlVars } from 'lib/url';
 import fetchJSON from 'lib/fetch-json';
 
@@ -88,6 +89,12 @@ const isInCommercialConsentGlobalBannerTest = (): boolean =>
 const isInEU = (): boolean =>
     (getCookie('GU_geo_continent') || 'OTHER').toUpperCase() === 'EU';
 
+const isInAU = (): boolean =>
+    (getFromStorage() || 'OTHER').toUpperCase() === 'AU' ||
+    (getFromStorage() || 'OTHER').toUpperCase() === 'NZ';
+
+const gdprApplies = (): boolean => isInEU() || isInAU();
+
 class CmpService {
     isLoaded: boolean;
     cmpReady: boolean;
@@ -110,7 +117,7 @@ class CmpService {
             this.cmpConfig.logging = 'debug';
             log.info('Set logging level to DEBUG');
         }
-        if (isInEU() || isInCommercialConsentGlobalBannerTest()) {
+        if (gdprApplies() || isInCommercialConsentGlobalBannerTest()) {
             this.cmpConfig.gdprApplies = true;
         }
     }
